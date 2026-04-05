@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Landing Page — L'Art de Convertir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#09090b;--bg2:#111113;--fg:#fafaf9;--accent:#e2a63d;--accent2:#e8734a;
+--glass:rgba(255,255,255,.03);--glass-border:rgba(255,255,255,.06);
+--muted:rgba(250,250,249,.5);--muted2:rgba(250,250,249,.3);
+--font-display:'Syne',sans-serif;--font-body:'Space Grotesk',sans-serif;--font-serif:'Playfair Display',serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);overflow-x:hidden;
+-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent);color:var(--bg)}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.018;
+background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.cursor-glow{position:fixed;width:600px;height:600px;border-radius:50%;
+background:radial-gradient(circle,rgba(226,166,61,.07),transparent 60%);
+pointer-events:none;z-index:0;transform:translate(-50%,-50%);
+transition:left .6s cubic-bezier(.22,1,.36,1),top .6s cubic-bezier(.22,1,.36,1)}
+
+/* ─── NAV ─── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 2.5rem;
+display:flex;justify-content:space-between;align-items:center;
+backdrop-filter:blur(24px) saturate(1.2);-webkit-backdrop-filter:blur(24px) saturate(1.2);
+background:rgba(9,9,11,.7);border-bottom:1px solid var(--glass-border);
+transition:transform .5s cubic-bezier(.22,1,.36,1)}
+nav.hidden{transform:translateY(-100%)}
+.nav-logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:-.01em;color:var(--fg);white-space:nowrap}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:2.5rem}
+.nav-links a{color:var(--muted2);text-decoration:none;font-size:.8rem;font-weight:500;letter-spacing:.08em;
+text-transform:uppercase;transition:color .3s;white-space:nowrap}
+.nav-links a:hover{color:var(--fg)}
+
+/* ─── HERO ─── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+padding:8rem 3rem 5rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:-2}
+.hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.08;filter:saturate(0) contrast(1.1);
+transform:scale(1.05);transition:transform 20s linear}
+.hero-bg::after{content:'';position:absolute;inset:0;
+background:linear-gradient(180deg,var(--bg),transparent 40%,transparent 70%,var(--bg))}
+.hero-glow{position:absolute;top:20%;right:10%;width:400px;height:400px;border-radius:50%;
+background:radial-gradient(circle,rgba(226,166,61,.06),transparent 70%);z-index:-1;
+animation:breathe 8s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:1}}
+
+.hero-inner{max-width:1400px;width:100%;margin:0 auto}
+.hero-label{font-family:var(--font-display);font-size:.85rem;font-weight:600;letter-spacing:.25em;
+text-transform:uppercase;color:var(--accent);margin-bottom:2.5rem;
+opacity:0;animation:fadeUp .8s .2s forwards}
+
+/* FIX: font-size controlled + proper wrapping */
+.hero h1{font-family:var(--font-display);
+font-size:clamp(2.5rem,7vw,6.5rem);
+font-weight:800;line-height:.95;letter-spacing:-.04em;margin-bottom:2.5rem;
+max-width:min(900px,90vw);
+overflow-wrap:break-word;word-wrap:break-word;hyphens:none}
+.hero h1 .line{display:block;overflow:hidden;padding-bottom:.08em}
+.hero h1 .line span{display:inline-block;opacity:0;transform:translateY(110%);
+animation:slideUp .9s cubic-bezier(.16,1,.3,1) forwards}
+.hero h1 .line:nth-child(1) span{animation-delay:.35s}
+.hero h1 .line:nth-child(2) span{animation-delay:.5s}
+.hero h1 .line:nth-child(3) span{animation-delay:.65s}
+.hero h1 em{font-family:var(--font-serif);font-style:italic;color:var(--accent)}
+
+.hero-sub{font-size:clamp(1rem,1.4vw,1.2rem);color:var(--muted);max-width:480px;line-height:1.75;
+font-weight:300;opacity:0;animation:fadeUp .8s .85s forwards}
+.hero-cta{margin-top:3rem;display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeUp .8s 1.05s forwards}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2rem;border-radius:60px;
+font-family:var(--font-body);font-size:.88rem;font-weight:500;letter-spacing:.01em;
+text-decoration:none;cursor:pointer;border:none;transition:all .5s cubic-bezier(.16,1,.3,1);
+white-space:nowrap}
+.btn-primary{background:var(--accent);color:var(--bg);position:relative}
+.btn-primary:hover{transform:translateY(-2px) scale(1.03);
+box-shadow:0 8px 30px rgba(226,166,61,.3),0 0 60px rgba(226,166,61,.12)}
+.btn-ghost{border:1px solid rgba(255,255,255,.12);color:var(--fg);background:transparent}
+.btn-ghost:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.04);
+transform:translateY(-2px)}
+
+.scroll-indicator{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+display:flex;flex-direction:column;align-items:center;gap:.8rem;
+opacity:0;animation:fadeUp .8s 1.5s forwards}
+.scroll-indicator span{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted2)}
+.scroll-line{width:1px;height:45px;position:relative;overflow:hidden;background:rgba(255,255,255,.08)}
+.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;
+background:linear-gradient(to bottom,transparent,var(--accent));animation:scrollDrop 2s infinite}
+@keyframes scrollDrop{0%{top:-100%}100%{top:100%}}
+
+/* ─── SECTIONS ─── */
+section{padding:8rem 3rem}
+.section-label{font-family:var(--font-display);font-size:1.15rem;font-weight:700;
+letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:1.8rem}
+.section-title{font-family:var(--font-display);font-size:clamp(2rem,4.5vw,3.6rem);font-weight:700;
+line-height:1.08;letter-spacing:-.03em;margin-bottom:1rem;color:var(--fg);
+overflow-wrap:break-word}
+.section-title em{font-family:var(--font-serif);font-style:italic;color:var(--accent)}
+
+/* ─── DEFINITION ─── */
+.definition{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;
+max-width:1100px;margin:0 auto}
+.def-visual{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:4/3}
+.def-visual img{width:100%;height:100%;object-fit:cover;filter:saturate(.5) brightness(.85);
+transition:transform 8s cubic-bezier(.16,1,.3,1)}
+.def-visual:hover img{transform:scale(1.06)}
+.def-visual::after{content:'';position:absolute;inset:0;border:1px solid var(--glass-border);
+border-radius:16px;pointer-events:none}
+.float-tag{position:absolute;padding:.55rem 1.1rem;border-radius:30px;font-size:.72rem;
+font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08)}
+.float-tag.t1{top:1.2rem;right:1.2rem;background:rgba(226,166,61,.1);color:var(--accent)}
+.float-tag.t2{bottom:1.2rem;left:1.2rem;background:rgba(232,115,74,.08);color:var(--accent2)}
+.def-content .big-quote{font-family:var(--font-serif);font-size:clamp(1.3rem,2.2vw,1.85rem);
+line-height:1.55;margin-bottom:2rem;font-weight:400;color:var(--fg)}
+.def-content .big-quote em{color:var(--accent);font-style:italic}
+.def-content p{color:var(--muted);line-height:1.85;font-weight:300;font-size:.95rem}
+
+/* ─── STATS ─── */
+.stats{border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);
+background:var(--bg2)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);max-width:1100px;margin:0 auto;text-align:center}
+.stat{padding:2.5rem 1rem;position:relative}
+.stat+.stat::before{content:'';position:absolute;left:0;top:20%;height:60%;width:1px;
+background:var(--glass-border)}
+.stat-number{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,3.2rem);font-weight:800;
+color:var(--accent);line-height:1}
+.stat-label{font-size:.78rem;color:var(--muted2);margin-top:.6rem;letter-spacing:.02em;line-height:1.5}
+
+/* ─── ANATOMY ─── */
+.anatomy{max-width:1100px;margin:0 auto}
+.anatomy-intro{text-align:center;max-width:550px;margin:0 auto 5rem}
+.anatomy-intro p{color:var(--muted);line-height:1.8;font-weight:300;margin-top:1.5rem;font-size:.95rem}
+.anatomy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.anatomy-card{background:var(--bg2);border:1px solid var(--glass-border);border-radius:14px;
+padding:2.2rem;position:relative;overflow:hidden;
+transition:all .6s cubic-bezier(.16,1,.3,1);transform-style:preserve-3d;perspective:800px}
+.anatomy-card:hover{transform:translateY(-6px);border-color:rgba(226,166,61,.15);
+box-shadow:0 25px 50px rgba(0,0,0,.4),0 0 80px rgba(226,166,61,.04)}
+.anatomy-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;
+background:linear-gradient(90deg,transparent,var(--accent),transparent);
+opacity:0;transition:opacity .5s}
+.anatomy-card:hover::before{opacity:1}
+
+.card-number{font-family:var(--font-display);font-size:3.5rem;font-weight:800;line-height:1;
+margin-bottom:.8rem;
+background:linear-gradient(135deg,var(--accent),var(--accent2));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;opacity:.45;
+transition:opacity .5s}
+.anatomy-card:hover .card-number{opacity:.85}
+.card-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;margin-bottom:.7rem;
+letter-spacing:-.01em;color:var(--fg)}
+.card-desc{font-size:.85rem;color:var(--muted);line-height:1.7;font-weight:300}
+
+/* ─── CONVERSION ─── */
+.conversion{max-width:1100px;margin:0 auto}
+.conversion-layout{display:grid;grid-template-columns:1.2fr 1fr;gap:5rem;align-items:center}
+.conversion-text h3{font-family:var(--font-display);font-size:clamp(1.15rem,1.8vw,1.5rem);
+font-weight:600;margin-bottom:1.5rem;line-height:1.45;color:var(--fg)}
+.conversion-text p{color:var(--muted);line-height:1.8;font-weight:300;margin-bottom:1.5rem;font-size:.95rem}
+
+.funnel{display:flex;flex-direction:column;align-items:center;gap:3px}
+.funnel-step{display:flex;align-items:center;justify-content:center;text-align:center;
+font-family:var(--font-display);font-weight:600;font-size:.82rem;letter-spacing:.03em;
+padding:1.3rem 1rem;transition:all .5s cubic-bezier(.16,1,.3,1);
+clip-path:polygon(4% 0%,96% 0%,100% 100%,0% 100%);position:relative}
+.funnel-step:nth-child(1){width:100%;background:rgba(226,166,61,.08);color:var(--accent)}
+.funnel-step:nth-child(2){width:78%;background:rgba(226,166,61,.14);color:var(--accent)}
+.funnel-step:nth-child(3){width:56%;background:rgba(226,166,61,.22);color:var(--accent)}
+.funnel-step:nth-child(4){width:40%;background:var(--accent);color:var(--bg);font-weight:700;
+border-radius:0 0 8px 8px}
+.funnel-step:hover{filter:brightness(1.2);transform:scale(1.04)}
+
+/* ─── CTA SECTION ─── */
+.cta-section{text-align:center;position:relative;overflow:hidden;padding:10rem 3rem}
+.cta-section::before{content:'';position:absolute;top:50%;left:50%;width:500px;height:500px;
+transform:translate(-50%,-50%);border-radius:50%;
+background:radial-gradient(circle,rgba(226,166,61,.05),transparent 70%);pointer-events:none}
+.cta-section .section-title{max-width:650px;margin:0 auto 1.5rem}
+.cta-section p{color:var(--muted);font-weight:300;max-width:420px;margin:0 auto 2.5rem;
+line-height:1.75;font-size:.95rem}
+.cta-section .section-label{text-align:center}
+
+/* ─── FOOTER ─── */
+footer{padding:2.5rem;text-align:center;border-top:1px solid var(--glass-border)}
+.footer-sig{font-family:var(--font-body);font-size:.85rem;color:var(--muted2);letter-spacing:.03em;font-weight:300}
+.footer-sig strong{color:var(--accent);font-weight:700;font-family:var(--font-display)}
+.footer-year{font-size:.7rem;color:rgba(255,255,255,.15);margin-top:.6rem;letter-spacing:.15em;
+text-transform:uppercase}
+
+/* ─── SCROLL REVEAL ─── */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.16,1,.3,1),
+transform .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:none}
+
+.stagger-children .reveal-child{opacity:0;transform:translateY(24px);
+transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.stagger-children.visible .reveal-child{opacity:1;transform:none}
+
+.parallax{will-change:transform;transition:transform .1s linear}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateY(110%)}to{opacity:1;transform:none}}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1100px){
+  .hero h1{font-size:clamp(2.2rem,6.5vw,5rem)}
+}
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  .hero{padding:7rem 1.5rem 4rem}
+  .hero h1{font-size:clamp(2rem,8vw,3.5rem)}
+  section{padding:5rem 1.5rem}
+  .definition{grid-template-columns:1fr;gap:3rem}
+  .def-visual{max-height:280px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat+.stat::before{display:none}
+  .anatomy-grid{grid-template-columns:1fr}
+  .conversion-layout{grid-template-columns:1fr;gap:3rem}
+  .funnel{order:-1}
+  .cta-section{padding:6rem 1.5rem}
+}
+@media(max-width:480px){
+  .hero{padding:6rem 1.2rem 4rem}
+  .hero h1{font-size:2.2rem;line-height:1}
+  .hero-cta{flex-direction:column;width:100%}
+  .hero-cta .btn{width:100%;justify-content:center}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .section-label{font-size:1rem}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-glow" id="glow"></div>
+
+<nav id="navbar">
+  <div class="nav-logo">LP <span>✦</span> ANATOMY</div>
+  <div class="nav-links">
+    <a href="#definition">Définition</a>
+    <a href="#anatomie">Anatomie</a>
+    <a href="#conversion">Conversion</a>
+    <a href="#action">Action</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1600&q=80" alt="" class="parallax" data-speed=".03">
+  </div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-label">La masterclass que personne ne vous a donnée</div>
+    <h1>
+      <span class="line"><span>Une page.</span></span>
+      <span class="line"><span>Un <em>objectif.</em></span></span>
+      <span class="line"><span>Zéro distraction.</span></span>
+    </h1>
+    <p class="hero-sub">Une Landing Page n'est pas une simple page web.<br>C'est une arme de conversion massive — conçue pour transformer un visiteur en action.</p>
+    <div class="hero-cta">
+      <a href="#definition" class="btn btn-primary">Découvrir l'anatomie ↓</a>
+      <a href="#conversion" class="btn btn-ghost">Comprendre la conversion</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══ DEFINITION ═══ -->
+<section id="definition">
+  <div class="definition reveal">
+    <div class="def-visual">
+      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80" alt="" class="parallax" data-speed=".04">
+      <div class="float-tag t1">✦ Conversion</div>
+      <div class="float-tag t2">◆ One Goal</div>
+    </div>
+    <div class="def-content">
+      <div class="section-label">01 — Définition</div>
+      <div class="section-title">C'est quoi, <em>exactement ?</em></div>
+      <div class="big-quote">"Une Landing Page est une page web autonome, créée dans un <em>seul but</em> : convertir un visiteur en lead, client ou abonné."</div>
+      <p>Contrairement à un site web classique avec sa navigation complexe et ses dizaines de liens, la Landing Page élimine tout le bruit. Pas de menu. Pas de sidebar. Pas d'échappatoire. Chaque pixel, chaque mot, chaque espace vide est orchestré pour guider le regard vers un seul Call-to-Action.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<section class="stats">
+  <div class="stats-grid stagger-children" id="statsGrid">
+    <div class="stat reveal-child">
+      <div class="stat-number" data-target="68" data-suffix="%">0</div>
+      <div class="stat-label">des entreprises B2B utilisent des Landing Pages</div>
+    </div>
+    <div class="stat reveal-child">
+      <div class="stat-number" data-target="5" data-prefix="×">0</div>
+      <div class="stat-label">plus de conversions qu'une page classique</div>
+    </div>
+    <div class="stat reveal-child">
+      <div class="stat-number" data-target="8" data-suffix="s">0</div>
+      <div class="stat-label">pour capter l'attention d'un visiteur</div>
+    </div>
+    <div class="stat reveal-child">
+      <div class="stat-number" data-target="1" data-suffix="">0</div>
+      <div class="stat-label">seul objectif. Toujours. Sans exception.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ANATOMY ═══ -->
+<section id="anatomie">
+  <div class="anatomy">
+    <div class="anatomy-intro reveal">
+      <div class="section-label">02 — Anatomie</div>
+      <div class="section-title">Les 6 organes <em>vitaux</em></div>
+      <p>Chaque Landing Page qui performe partage la même ossature. Six composants, zéro superflu. Voici l'anatomie d'une machine à convertir.</p>
+    </div>
+    <div class="anatomy-grid stagger-children" id="anatomyGrid">
+      <div class="anatomy-card reveal-child">
+        <div class="card-number">01</div>
+        <div class="card-title">Le Hero — Le coup de foudre</div>
+        <div class="card-desc">Le titre massif qui arrête le scroll. Vous avez 3 secondes. Une promesse claire, un bénéfice immédiat, zéro jargon.</div>
+      </div>
+      <div class="anatomy-card reveal-child">
+        <div class="card-number">02</div>
+        <div class="card-title">Le Sous-titre — Le murmure</div>
+        <div class="card-desc">Il complète le Hero. Il ajoute du contexte sans voler la vedette. Court, précis, rassurant.</div>
+      </div>
+      <div class="anatomy-card reveal-child">
+        <div class="card-number">03</div>
+        <div class="card-title">Le Visuel — La preuve</div>
+        <div class="card-desc">Image, vidéo ou mockup. Le cerveau traite le visuel 60 000× plus vite que le texte. Exploitez ça.</div>
+      </div>
+      <div class="anatomy-card reveal-child">
+        <div class="card-number">04</div>
+        <div class="card-title">Les Bénéfices — Le "pourquoi"</div>
+        <div class="card-desc">Pas les features. Les bénéfices. Le visiteur ne veut pas une perceuse, il veut un trou dans le mur.</div>
+      </div>
+      <div class="anatomy-card reveal-child">
+        <div class="card-number">05</div>
+        <div class="card-title">La Social Proof — La confiance</div>
+        <div class="card-desc">Témoignages, logos clients, chiffres clés. Personne ne veut être le premier à sauter. Montrez que d'autres l'ont fait.</div>
+      </div>
+      <div class="anatomy-card reveal-child">
+        <div class="card-number">06</div>
+        <div class="card-title">Le CTA — Le bouton final</div>
+        <div class="card-desc">Call-to-Action. Le moment de vérité. Un verbe d'action, une couleur contrastée, une urgence subtile. C'est ici que tout se joue.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONVERSION ═══ -->
+<section id="conversion">
+  <div class="conversion reveal">
+    <div class="section-label">03 — Conversion</div>
+    <div class="section-title" style="margin-bottom:4rem">L'entonnoir <em>invisible</em></div>
+    <div class="conversion-layout">
+      <div class="conversion-text">
+        <h3>Chaque visiteur entre par le haut. Seuls les convaincus sortent par le bas.</h3>
+        <p>La Landing Page est un entonnoir psychologique. Elle capte l'attention (Hero), construit la confiance (Social Proof), élimine les objections (Bénéfices) et pousse à l'action (CTA). Chaque scroll rapproche le visiteur de la conversion.</p>
+        <p>Le taux de conversion moyen d'une Landing Page optimisée est de 9,7%. Les meilleures dépassent 25%. Un site classique ? À peine 2,35%.</p>
+      </div>
+      <div class="funnel stagger-children" id="funnelGrid">
+        <div class="funnel-step reveal-child">✦ Visiteurs — Trafic entrant</div>
+        <div class="funnel-step reveal-child">◆ Intéressés — Scroll + lecture</div>
+        <div class="funnel-step reveal-child">▲ Convaincus — Confiance établie</div>
+        <div class="funnel-step reveal-child">→ CONVERTIS — Action réalisée</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section" id="action">
+  <div class="reveal">
+    <div class="section-label">04 — À vous de jouer</div>
+    <div class="section-title">Vous venez de vivre <em>l'expérience.</em></div>
+    <p>Cette page que vous lisez en ce moment — c'est une Landing Page. Un seul sujet. Un flux guidé. Pas de menu distrayant. Vous êtes arrivé(e) jusqu'ici, non ?</p>
+    <a href="#" class="btn btn-primary" style="margin:0 auto">C'est ça, la conversion. ✦</a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-sig">Developed by <strong>AADIL KHATTA</strong></div>
+  <div class="footer-year">PIE — OFPPT 2025/2026</div>
+</footer>
+
+<script>
+(function(){
+  const glow=document.getElementById('glow');
+  document.addEventListener('mousemove',e=>{
+    glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px'
+  });
+
+  document.querySelectorAll('.anatomy-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`translateY(-6px) rotateY(${x*6}deg) rotateX(${-y*6}deg)`;
+    });
+    card.addEventListener('mouseleave',()=>{card.style.transform=''});
+  });
+
+  const revealObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revealObs.unobserve(e.target)}})
+  },{threshold:.12,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+  const staggerObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        e.target.querySelectorAll('.reveal-child').forEach((child,i)=>{
+          child.style.transitionDelay=i*.12+'s';
+        });
+        staggerObs.unobserve(e.target);
+      }
+    })
+  },{threshold:.15});
+  document.querySelectorAll('.stagger-children').forEach(el=>staggerObs.observe(el));
+
+  let statsFired=false;
+  const statsObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting&&!statsFired){
+        statsFired=true;
+        e.target.querySelectorAll('.stat-number').forEach(el=>{
+          const end=+el.dataset.target;
+          const pre=el.dataset.prefix||'';
+          const suf=el.dataset.suffix||'';
+          const dur=1400;const start=performance.now();
+          (function tick(now){
+            const p=Math.min((now-start)/dur,1);
+            const ease=1-Math.pow(1-p,4);
+            el.textContent=pre+Math.round(ease*end)+suf;
+            if(p<1)requestAnimationFrame(tick);
+          })(start);
+        });
+        statsObs.unobserve(e.target);
+      }
+    })
+  },{threshold:.3});
+  const sg=document.getElementById('statsGrid');
+  if(sg)statsObs.observe(sg);
+
+  const pxEls=document.querySelectorAll('.parallax');
+  let ticking=false;
+  window.addEventListener('scroll',()=>{
+    if(!ticking){
+      requestAnimationFrame(()=>{
+        const sy=window.scrollY;
+        pxEls.forEach(el=>{
+          const speed=parseFloat(el.dataset.speed)||.05;
+          el.style.transform='scale(1.05) translateY('+sy*speed*-1+'px)';
+        });
+        ticking=false;
+      });
+      ticking=true;
+    }
+  },{passive:true});
+
+  let lastY=0;const nav=document.getElementById('navbar');
+  window.addEventListener('scroll',()=>{
+    const y=window.scrollY;nav.classList.toggle('hidden',y>lastY&&y>80);lastY=y;
+  },{passive:true});
+
+})();
+</script>
+</body>
+</html>
